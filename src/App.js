@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { AccessAlarm, ThreeDRotation } from '@material-ui/icons';
+import AddIcon from '@material-ui/icons/Add';
+import RestoreIcon from '@material-ui/icons/Restore';
+import ExploreIcon from '@material-ui/icons/Explore';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
-import { withStyles, Toolbar, Typography, List, ListItem, ListItemAvatar, ListItemText, Avatar, InputBase } from '@material-ui/core';
+import { withStyles, Toolbar, Typography, List, ListItem, ListItemAvatar, ListItemText, Avatar, InputBase, Fab, Divider } from '@material-ui/core';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+
 // import { fade } from '@material-ui/core/styles/colorManipulator';
 
 
@@ -21,34 +25,32 @@ const styles = theme => ({
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
   },
+  chatsList: {
+    height: 'calc(100% - 56px)',
+    overflowY: 'scroll',
+  },
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
+    position: 'relative'
   },
   drawerPaper: {
-    width: drawerWidth,
+    position: 'relative',
+    height: '100%',
+    width: 320,
   },
   toolbar: theme.mixins.toolbar,
-  // content: {
-  //   flexGrow: 1,
-  //   backgroundColor: theme.palette.background.default,
-  //   padding: theme.spacing.unit * 3,
-  // },
-  // search: {
-  //   position: 'relative',
-  //   borderRadius: theme.shape.borderRadius,
-  //   backgroundColor: fade(theme.palette.common.white, 0.15),
-  //   '&:hover': {
-  //     backgroundColor: fade(theme.palette.common.white, 0.25),
-  //   },
-  //   marginRight: theme.spacing.unit * 2,
-  //   marginLeft: 0,
-  //   width: '100%',
-  //   [theme.breakpoints.up('sm')]: {
-  //     marginLeft: theme.spacing.unit * 3,
-  //     width: 'auto',
-  //   },
-  // },
+  drawerHeader: {
+    ...theme.mixins.toolbar,
+    paddingLeft: theme.spacing.unit * 3,
+    paddingRight: theme.spacing.unit * 3,
+  },
+  newChatButton: {
+    position: 'absolute',
+    left: 'auto',
+    right: theme.spacing.unit * 3,
+    bottom: theme.spacing.unit * 3 + 48, // + bottom navigation
+  },
   inputRoot: {
     color: 'inherit',
     width: '90%',
@@ -77,17 +79,24 @@ class App extends Component {
         </Toolbar>
         </AppBar>
         <Drawer
-          className={classes.drawer}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
           variant="permanent"
           anchor="left">
-          <InputBase
-            placeholder="Search charts…"
-            classes={{
-              root: classes.inputRoot,
-              input: classes.inputInput,
-            }}
-          />
-          <List>
+          <div className={classes.drawerHeader}>
+            <InputBase
+              fullWidth
+              margin="normal"
+              placeholder="Search chats..."
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+            />
+          </div>
+          <Divider />
+          <List className={classes.chatsList}>
             {users.map( (user) => (
               <ListItem button key={user.id}>
                 <ListItemAvatar>
@@ -97,12 +106,21 @@ class App extends Component {
               </ListItem>
             ))}
           </List>
+          <Fab 
+            color="primary" 
+            aria-label="Add" 
+            className={classes.newChatButton}>
+            <AddIcon />
+          </Fab>
+          <BottomNavigation showLabels>
+            <BottomNavigationAction 
+              label="My Chats" 
+              icon={<RestoreIcon />} />
+            <BottomNavigationAction 
+              label="Explore" 
+              icon={<ExploreIcon />} />
+          </BottomNavigation>
         </Drawer>
-        <Button variant="contained" color="primary">
-          Hello World
-        </Button>
-        <AccessAlarm/>
-        <ThreeDRotation/>
       </CssBaseline>
     );
   }
