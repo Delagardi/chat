@@ -5,7 +5,7 @@ import RestoreIcon from '@material-ui/icons/Restore';
 import ExploreIcon from '@material-ui/icons/Explore';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
-import { withStyles, Toolbar, Typography, List, ListItem, ListItemAvatar, ListItemText, Avatar, InputBase, Fab, Divider } from '@material-ui/core';
+import { withStyles, Toolbar, Typography, List, ListItem, ListItemAvatar, ListItemText, Avatar, InputBase, Fab, Divider, Paper, Input } from '@material-ui/core';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 
@@ -13,13 +13,18 @@ import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 
 
 import users from './data/users';
+import messages from './data/messages';
 
 
-const drawerWidth = 240;
+const drawerWidth = 320;
 
 const styles = theme => ({
   root: {
+    position: 'relative',
     display: 'flex',
+    width: '100%',
+    height: '100%',
+    backgroundColor: theme.palette.background.default,
   },
   appBar: {
     width: `calc(100% - ${drawerWidth}px)`,
@@ -29,15 +34,15 @@ const styles = theme => ({
     height: 'calc(100% - 56px)',
     overflowY: 'scroll',
   },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    position: 'relative'
-  },
+  // drawer: {
+  //   width: drawerWidth,
+  //   flexShrink: 0,
+  //   position: 'relative'
+  // },
   drawerPaper: {
     position: 'relative',
     height: '100%',
-    width: 320,
+    width: drawerWidth,
   },
   toolbar: theme.mixins.toolbar,
   drawerHeader: {
@@ -62,6 +67,51 @@ const styles = theme => ({
     paddingBottom: theme.spacing.unit,
     transition: theme.transitions.create('width'),
     width: '100%'
+  },
+  chatLayout: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: '64px',
+    height: '100%',
+    overflow: 'hidden',
+  },
+  messagesWrapper: {
+    overflowX: 'scroll',
+    height: '100%',
+    width: '100%',
+    paddingTop: theme.spacing.unit * 3,
+    paddingBottom: '120px',
+  },
+  messageWrapper: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit}px ${theme.spacing.unit * 3}px`,
+  },
+  messageWrappperFromMe: {
+    justifyContent: 'flex-end',
+  },
+  message: {
+    maxWidth: '70%',
+    minWidth: '10%',
+    padding: theme.spacing.unit,
+    marginLeft: theme.spacing.unit * 2,
+  },
+  messageFromMe: {
+    marginRight: theme.spacing.unit * 2,
+    backgroundColor: '#e6dcff'
+  },
+  messageInputWrapper: {
+    position: 'fixed',
+    left: 'auto',
+    right: 0,
+    bottom: 0,
+    width: `calc(100% - 320px)`,
+    padding: theme.spacing.unit * 3,
+  },
+  messageInput: {
+    padding: theme.spacing.unit * 2,
   }
 });
 
@@ -71,56 +121,98 @@ class App extends Component {
 
     return (
       <CssBaseline>
-        <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <Typography variant="h6" color="inherit">
-            Chat
-          </Typography>
-        </Toolbar>
-        </AppBar>
-        <Drawer
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-          variant="permanent"
-          anchor="left">
-          <div className={classes.drawerHeader}>
-            <InputBase
-              fullWidth
-              margin="normal"
-              placeholder="Search chats..."
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-            />
+        <div className={classes.root}>
+          <AppBar position="fixed" className={classes.appBar}>
+            <Toolbar>
+              <Typography variant="h6" color="inherit">
+                Chat
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            variant="permanent"
+            anchor="left">
+            <div className={classes.drawerHeader}>
+              <InputBase
+                fullWidth
+                margin="normal"
+                placeholder="Search chats..."
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+              />
+            </div>
+            <Divider />
+            <List className={classes.chatsList}>
+              {users.map( (user) => (
+                <ListItem button key={user.id}>
+                  <ListItemAvatar>
+                    <Avatar>{user.username.substring(0,2).toUpperCase()}</Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={user.username} secondary={"Last visit: "+user.lastVisit}/>
+                </ListItem>
+              ))}
+            </List>
+            <Fab 
+              color="primary" 
+              aria-label="Add" 
+              className={classes.newChatButton}>
+              <AddIcon />
+            </Fab>
+            <BottomNavigation showLabels>
+              <BottomNavigationAction 
+                label="My Chats" 
+                icon={<RestoreIcon />} />
+              <BottomNavigationAction 
+                label="Explore" 
+                icon={<ExploreIcon />} />
+            </BottomNavigation>
+          </Drawer>
+          <main className={classes.chatLayout}>
+          <div className={classes.messagesWrapper}>
+            {messages && messages.map( (message, index) => {
+              const isMessageFromMe = message.sender === 'me';
+
+              const userAvatar = (
+                <Avatar>
+                  {message.sender[0]}
+                </Avatar>
+              );
+
+              return (
+                <div 
+                  key={index} 
+                  className={[classes.messageWrapper,
+                              isMessageFromMe ? classes.messageWrappperFromMe : ''
+                              ].join(' ')}>
+                  {!isMessageFromMe && userAvatar}
+                  <Paper className={[
+                    classes.message,
+                    isMessageFromMe ? classes.messageFromMe : ''
+                  ].join(' ')}>
+                    <Typography variant="caption">
+                      {message.sender}
+                    </Typography>
+                    <Typography variant="body1">
+                      {message.content}
+                    </Typography>
+                  </Paper>
+                  {isMessageFromMe && userAvatar}
+                </div>
+              )
+            })}
           </div>
-          <Divider />
-          <List className={classes.chatsList}>
-            {users.map( (user) => (
-              <ListItem button key={user.id}>
-                <ListItemAvatar>
-                  <Avatar>{user.username.substring(0,2).toUpperCase()}</Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={user.username} secondary={"Last visit: "+user.lastVisit}/>
-              </ListItem>
-            ))}
-          </List>
-          <Fab 
-            color="primary" 
-            aria-label="Add" 
-            className={classes.newChatButton}>
-            <AddIcon />
-          </Fab>
-          <BottomNavigation showLabels>
-            <BottomNavigationAction 
-              label="My Chats" 
-              icon={<RestoreIcon />} />
-            <BottomNavigationAction 
-              label="Explore" 
-              icon={<ExploreIcon />} />
-          </BottomNavigation>
-        </Drawer>
+          <div className={classes.messageInputWrapper}>
+            <Paper className={classes.messageInput} elevation={6}>
+              <Input fullWidth placeholder="Type your message…"/>
+            </Paper>
+          </div>
+        </main>
+        </div>
       </CssBaseline>
     );
   }
