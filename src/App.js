@@ -9,12 +9,8 @@ import { withStyles, Toolbar, Typography, List, ListItem, ListItemAvatar, ListIt
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 
-// import { fade } from '@material-ui/core/styles/colorManipulator';
-
-
 import users from './data/users';
 import messages from './data/messages';
-
 
 const drawerWidth = 320;
 
@@ -31,14 +27,9 @@ const styles = theme => ({
     marginLeft: drawerWidth,
   },
   chatsList: {
-    height: 'calc(100% - 56px)',
+    height: 'calc(100% - 60%)',
     overflowY: 'scroll',
   },
-  // drawer: {
-  //   width: drawerWidth,
-  //   flexShrink: 0,
-  //   position: 'relative'
-  // },
   drawerPaper: {
     position: 'relative',
     height: '100%',
@@ -49,6 +40,9 @@ const styles = theme => ({
     ...theme.mixins.toolbar,
     paddingLeft: theme.spacing.unit * 3,
     paddingRight: theme.spacing.unit * 3,
+  },
+  bottomNav: {
+    position: 'relative'
   },
   newChatButton: {
     position: 'absolute',
@@ -157,13 +151,13 @@ class App extends Component {
                 </ListItem>
               ))}
             </List>
-            <Fab 
-              color="primary" 
-              aria-label="Add" 
-              className={classes.newChatButton}>
-              <AddIcon />
-            </Fab>
-            <BottomNavigation showLabels>
+            <BottomNavigation showLabels className={classes.bottomNav}>
+              <Fab 
+                color="primary" 
+                aria-label="Add" 
+                className={classes.newChatButton}>
+                <AddIcon />
+              </Fab>
               <BottomNavigationAction 
                 label="My Chats" 
                 icon={<RestoreIcon />} />
