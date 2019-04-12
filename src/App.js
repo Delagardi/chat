@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import classnames from 'classnames';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AddIcon from '@material-ui/icons/Add';
 import RestoreIcon from '@material-ui/icons/Restore';
@@ -180,14 +181,15 @@ class App extends Component {
               return (
                 <div 
                   key={index} 
-                  className={[classes.messageWrapper,
-                              isMessageFromMe ? classes.messageWrappperFromMe : ''
-                              ].join(' ')}>
+                  className={classnames(
+                    classes.messageWrapper,
+                    isMessageFromMe && classes.messageWrappperFromMe
+                  )}>
                   {!isMessageFromMe && userAvatar}
-                  <Paper className={[
+                  <Paper className={classnames(
                     classes.message,
-                    isMessageFromMe ? classes.messageFromMe : ''
-                  ].join(' ')}>
+                    isMessageFromMe && classes.messageFromMe
+                  )}>
                     <Typography variant="caption">
                       {message.sender}
                     </Typography>
